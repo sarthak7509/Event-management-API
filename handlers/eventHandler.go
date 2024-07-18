@@ -84,3 +84,30 @@ func UpdateEventById(ctx *gin.Context) {
 	}
 	ctx.JSON(201, updateEvent)
 }
+
+func DeleteEventById(ctx *gin.Context) {
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(500, err)
+		return
+	}
+
+	event, err := models.GetEventById(id)
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"message": "No Event with that id",
+		})
+		return
+	}
+	err = event.Delete()
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"message": "could not delete the event",
+		})
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"message": "Event Deleted successfully",
+	})
+}
