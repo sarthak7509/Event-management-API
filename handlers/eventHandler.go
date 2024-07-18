@@ -51,3 +51,36 @@ func GetEventById(ctx *gin.Context) {
 	}
 	ctx.JSON(200, event)
 }
+
+func UpdateEventById(ctx *gin.Context) {
+	id, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+	if err != nil {
+		ctx.JSON(500, err)
+		return
+	}
+	_, err = models.GetEventById(id)
+	if err != nil {
+		ctx.JSON(400, gin.H{
+			"message": "Could not found the event with that id",
+		})
+		return
+	}
+	var updateEvent models.Event
+	err = ctx.ShouldBindJSON(&updateEvent)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err,
+		})
+		return
+	}
+
+	updateEvent.ID = id
+	err = updateEvent.Update()
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"message": "Could not update the event please contact administrator",
+		})
+		return
+	}
+	ctx.JSON(201, updateEvent)
+}

@@ -15,7 +15,7 @@ type Event struct {
 	UserId      int       `json:"user_id"`
 }
 
-var events = []Event{}
+//var events = []Event{}
 
 func (e Event) Save() error {
 	//save it to database
@@ -34,6 +34,24 @@ func (e Event) Save() error {
 	}
 	id, err := result.LastInsertId()
 	e.ID = id
+	return err
+}
+
+func (e Event) Update() error {
+	query := `
+	UPDATE events
+	SET name =?, description =?, location =?, datetime=?
+	WHERE id=?
+	`
+
+	stmt, err := db.DB.Prepare(query)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close() // this line removes the purpose technically
+
+	_, err = stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.ID)
+
 	return err
 }
 
