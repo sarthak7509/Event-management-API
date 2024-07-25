@@ -1,6 +1,6 @@
 module github.com/sarthak7509/event-management
 
-go 1.22.5
+go 1.22
 
 require (
 	github.com/bytedance/sonic v1.11.9 // indirect
