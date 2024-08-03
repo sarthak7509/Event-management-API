@@ -13,4 +13,5 @@ func RegisterEventRoute(server *gin.Engine) {
 	server.POST("/events", handlers.CreateEvent)
 	//user logins
 	server.POST("/signup", handlers.SignUp)
+	server.GET("/login", handlers.LogIn)
 }

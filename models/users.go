@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/sarthak7509/event-management/db"
 	"github.com/sarthak7509/event-management/utils"
 )
@@ -31,4 +33,22 @@ func (u *User) Save() error {
 	}
 	u.Id, err = result.LastInsertId()
 	return err
+}
+
+func (u *User) Validate() error {
+	query := `
+		SELECT password FROM users WHERE email=?
+	`
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&retrievedPassword)
+	if err != nil {
+		return err
+	}
+
+	if !utils.CompareHash(u.Password, retrievedPassword) {
+		return errors.New("password didnt matched")
+	}
+	return nil
 }

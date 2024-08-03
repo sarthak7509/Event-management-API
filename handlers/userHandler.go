@@ -23,3 +23,25 @@ func SignUp(ctx *gin.Context) {
 	}
 	ctx.JSON(201, user)
 }
+
+func LogIn(ctx *gin.Context) {
+	var user models.User
+	err := ctx.ShouldBindJSON(&user)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	err = user.Validate()
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Looks good u can go have a nice day",
+	})
+
+}
