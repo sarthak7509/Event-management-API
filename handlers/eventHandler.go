@@ -17,8 +17,8 @@ func CreateEvent(ctx *gin.Context) {
 		})
 		return
 	}
-	event.ID = 1
-	event.UserId = 22
+	userid := ctx.GetInt64("userId")
+	event.UserId = userid
 	err = event.Save()
 	if err != nil {
 		ctx.JSON(500, err)

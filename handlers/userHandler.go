@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sarthak7509/event-management/models"
+	"github.com/sarthak7509/event-management/utils"
 )
 
 func SignUp(ctx *gin.Context) {
@@ -40,8 +41,15 @@ func LogIn(ctx *gin.Context) {
 		})
 		return
 	}
+	token, err := utils.GenerateToken(user.Id, user.Email)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, gin.H{
-		"message": "Looks good u can go have a nice day",
+		"token": token,
 	})
 
 }
