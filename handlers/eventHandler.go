@@ -58,10 +58,18 @@ func UpdateEventById(ctx *gin.Context) {
 		ctx.JSON(500, err)
 		return
 	}
-	_, err = models.GetEventById(id)
+	event, err := models.GetEventById(id)
+	userid := ctx.GetInt64("userId")
+
 	if err != nil {
 		ctx.JSON(400, gin.H{
 			"message": "Could not found the event with that id",
+		})
+		return
+	}
+	if event.UserId != userid {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "You cant update this event",
 		})
 		return
 	}
@@ -91,11 +99,17 @@ func DeleteEventById(ctx *gin.Context) {
 		ctx.JSON(500, err)
 		return
 	}
-
+	userid := ctx.GetInt64("userId")
 	event, err := models.GetEventById(id)
 	if err != nil {
 		ctx.JSON(500, gin.H{
 			"message": "No Event with that id",
+		})
+		return
+	}
+	if event.UserId != userid {
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "You cant delete this event",
 		})
 		return
 	}
